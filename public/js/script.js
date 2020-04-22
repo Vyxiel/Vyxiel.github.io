@@ -1,8 +1,6 @@
 let camera, scene, renderer;
 let cube;
 
-let orbit;
-
 function init(){
 
 	scene = new THREE.Scene();
@@ -28,11 +26,14 @@ function init(){
 
    	window.addEventListener( 'wheel', onMouseWheel, false );
    	window.addEventListener( 'resize', onWindowResize, false );
+   	
 }
 
 function animate() {
+
 	requestAnimationFrame( animate );
 	renderer.render( scene, camera );
+
 }
 
 function onMouseWheel( event ) {
