@@ -2,9 +2,12 @@ let camera,
 	scene,
 	controls,
 	renderer,
+	raycaster,
 	cube;
 
 let mouseDown = false,
+	mouse,
+	INTERSECTED,
     mouseX = window.innerWidth/2,
     mouseY = window.innerHeight/2,
     deltaX = 0,
@@ -30,6 +33,9 @@ function init(){
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
 	camera.position.set( 400, 300, 0 );
 	camera.rotation.x = Math.PI * Math.sin( 60 );
+
+	raycaster = new THREE.Raycaster();
+	mouse = new THREE.Vector2();
 
 	const geometry = new THREE.BoxGeometry(1, 1, 1);
 	geometry.translate( 0, 0.5, 0 );
@@ -65,6 +71,8 @@ function init(){
 	scene.add( light );
 
     window.addEventListener( 'mousemove', onMouseMove, false );
+    window.addEventListener( 'mouseout', onMouseOut, false);
+	window.addEventListener( 'mouseleave', onMouseLeave, false);
     window.addEventListener( 'mousedown', onMouseDown, false);
     window.addEventListener( 'mouseup', onMouseUp, false);
    	// window.addEventListener( 'wheel', onMouseWheel, false );
@@ -82,6 +90,9 @@ function animate() {
 function onMouseMove ( evt ){
 	/* Hold Mouse 1 */
     if (!mouseDown) {
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
         return;
     }
 
@@ -95,6 +106,16 @@ function onMouseMove ( evt ){
 
     translateCamera(deltaX, deltaY);
 
+}
+
+function onMouseOut (evt){
+	 mouse.x = -100000;
+	 mouse.y = -100000;
+}
+
+function onMouseLeave (evt){
+	 mouse.x = -100000;
+	 mouse.y = -100000;
 }
 
 function onMouseDown(evt) {
@@ -143,7 +164,30 @@ function translateCamera(deltaX, deltaY) {
 }
 
 function render() {
+	// update the picking ray with the camera and mouse position
+	raycaster.setFromCamera( mouse, camera );
+
+	// calculate objects intersecting the picking ray
+	var intersects = raycaster.intersectObjects( scene.children );
+
+	// for ( var i = 0; i < intersects.length; i++ ) {
+
+	// 	intersects[ i ].object.material.color.set( 0x66ff66 );
+
+	// }
+
+    if ( intersects.length > 0 ) {
+      if ( INTERSECTED != intersects[ 0 ].object ) {
+        if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+        INTERSECTED = intersects[ 0 ].object;
+        INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+        INTERSECTED.material.emissive.setHex( 0xff0000 );
+         console.log(intersects.length);
+      }
+    } else {
+      if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+      INTERSECTED = null;
+    }
 
 	renderer.render( scene, camera );
-
 }	
