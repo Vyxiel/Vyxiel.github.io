@@ -28,22 +28,8 @@ function init(){
 	document.body.appendChild( renderer.domElement );
 
 	camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-	camera.position.set( 400, 100, 0 );
-
-	/*controls = new MapControls( camera, renderer.domElement );
-
-	//controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
-
-	controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-	controls.dampingFactor = 0.05;
-
-	controls.screenSpacePanning = false;
-
-	controls.minDistance = 100;
-	controls.maxDistance = 500;
-
-	controls.maxPolarAngle = Math.PI / 2;*/
-
+	camera.position.set( 400, 300, 0 );
+	camera.rotation.x = Math.PI * Math.sin( 60 );
 
 	const geometry = new THREE.BoxGeometry(1, 1, 1);
 	geometry.translate( 0, 0.5, 0 );
@@ -78,9 +64,9 @@ function init(){
 	var light = new THREE.AmbientLight( 0x222222 );
 	scene.add( light );
 
-    // window.addEventListener( 'mousemove', onMouseMove, false );
-    // window.addEventListener( 'mousedown', onMouseDown, false);
-    // window.addEventListener( 'mouseup', onMouseUp, false);
+    window.addEventListener( 'mousemove', onMouseMove, false );
+    window.addEventListener( 'mousedown', onMouseDown, false);
+    window.addEventListener( 'mouseup', onMouseUp, false);
    	// window.addEventListener( 'wheel', onMouseWheel, false );
    	window.addEventListener( 'resize', onWindowResize, false );
 
@@ -95,19 +81,19 @@ function animate() {
 
 function onMouseMove ( evt ){
 	/* Hold Mouse 1 */
-    // if (!mouseDown) {
-    //     return;
-    // }
+    if (!mouseDown) {
+        return;
+    }
 
     evt.preventDefault();
 
     deltaX = evt.clientX - mouseX;
     deltaY = evt.clientY - mouseY;
 
-    mouseX = evt.clientX;
+ 	mouseX = evt.clientX;
     mouseY = evt.clientY;
 
-    rotateScene(deltaX, deltaY);
+    translateCamera(deltaX, deltaY);
 
 }
 
@@ -149,9 +135,11 @@ function onWindowResize() {
 
 }
 
-function rotateScene(deltaX, deltaY) {
-    cube.rotation.y += deltaX / 1000;
-    cube.rotation.x += deltaY / 1000;
+function translateCamera(deltaX, deltaY) {
+    // scene.rotation.y += deltaX / 1000;
+    // scene.rotation.x += deltaY / 1000;
+    camera.position.x -= deltaX / 2;
+    camera.position.z -= deltaY / 2;
 }
 
 function render() {
