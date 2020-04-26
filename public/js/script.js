@@ -7,7 +7,7 @@ let camera,
 
 let mouseDown = false,
 	mouse,
-	INTERSECTED,
+	INTERSECTED = null,
     mouseX = window.innerWidth/2,
     mouseY = window.innerHeight/2,
     deltaX = 0,
@@ -39,10 +39,9 @@ function init(){
 
 	const geometry = new THREE.BoxGeometry(1, 1, 1);
 	geometry.translate( 0, 0.5, 0 );
-	const material = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
 
 	for ( var i = 0; i < 500; i ++ ) {
-
+		const material = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true } );
 		var mesh = new THREE.Mesh( geometry, material );
 		mesh.position.x = Math.random() * 1600 - 800;
 		mesh.position.y = 0;
@@ -53,6 +52,7 @@ function init(){
 		mesh.updateMatrix();
 		mesh.matrixAutoUpdate = false;
 		scene.add( mesh );
+	
 	}
 
 	// cube = new THREE.Mesh( geometry, material );
@@ -92,7 +92,6 @@ function onMouseMove ( evt ){
     if (!mouseDown) {
         mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
         return;
     }
 
@@ -177,16 +176,16 @@ function render() {
 	// }
 
     if ( intersects.length > 0 ) {
-      if ( INTERSECTED != intersects[ 0 ].object ) {
-        if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-        INTERSECTED = intersects[ 0 ].object;
-        INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-        INTERSECTED.material.emissive.setHex( 0xff0000 );
-         console.log(intersects.length);
-      }
-    } else {
-      if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-      INTERSECTED = null;
+  		if ( INTERSECTED != intersects[ 0 ].object ) {
+	        if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+	        INTERSECTED = intersects[ 0 ].object;
+	        INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+	        INTERSECTED.material.emissive.setHex( 0xff0000 );
+	         console.log(intersects.length);
+  			}
+    	} else {
+	      	if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+	      	INTERSECTED = null;
     }
 
 	renderer.render( scene, camera );
