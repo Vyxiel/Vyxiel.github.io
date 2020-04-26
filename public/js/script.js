@@ -87,6 +87,11 @@ function animate() {
 
 }
 
+function clearPicking(){
+	 mouse.x = -100000;
+	 mouse.y = -100000;
+}
+
 function onMouseMove ( evt ){
 	/* Hold Mouse 1 */
     if (!mouseDown) {
@@ -94,7 +99,8 @@ function onMouseMove ( evt ){
 		mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
         return;
     }
-
+    
+    clearPicking();
     evt.preventDefault();
 
     deltaX = evt.clientX - mouseX;
@@ -108,18 +114,16 @@ function onMouseMove ( evt ){
 }
 
 function onMouseOut (evt){
-	 mouse.x = -100000;
-	 mouse.y = -100000;
+	 clearPicking();
 }
 
 function onMouseLeave (evt){
-	 mouse.x = -100000;
-	 mouse.y = -100000;
+	 clearPicking();
 }
 
 function onMouseDown(evt) {
     evt.preventDefault();
-
+	
     mouseDown = true;
     mouseX = evt.clientX;
     mouseY = evt.clientY;
@@ -169,23 +173,21 @@ function render() {
 	// calculate objects intersecting the picking ray
 	var intersects = raycaster.intersectObjects( scene.children );
 
-	// for ( var i = 0; i < intersects.length; i++ ) {
-
-	// 	intersects[ i ].object.material.color.set( 0x66ff66 );
-
-	// }
-
     if ( intersects.length > 0 ) {
   		if ( INTERSECTED != intersects[ 0 ].object ) {
 	        if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
 	        INTERSECTED = intersects[ 0 ].object;
 	        INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
 	        INTERSECTED.material.emissive.setHex( 0xff0000 );
-	         console.log(intersects.length);
+	         // console.log(intersects.length);
+	         if(mouseDown)  $('html,body').css('cursor', 'grabbing');
+	         else $('html,body').css('cursor', 'pointer');
   			}
     	} else {
 	      	if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
 	      	INTERSECTED = null;
+	        if(mouseDown)  $('html,body').css('cursor', 'grabbing');
+	      	else $('html,body').css('cursor', 'grab');
     }
 
 	renderer.render( scene, camera );
