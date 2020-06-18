@@ -28,15 +28,15 @@ function init(){
 	renderer = new THREE.WebGLRenderer( { antialias: true } );
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	// renderer.shadowMap.enabled = true;
-	// renderer.shadowMap.type = THREE.BasicShadowMap;
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.BasicShadowMap;
 	document.body.appendChild( renderer.domElement );
 
 
 	camera = new THREE.PerspectiveCamera( 30, window.innerWidth / window.innerHeight, 1, 1000 );
 	camera.position.set( 200, 300, 200 );
 	// camera.rotation.order = 'YXZ';
-	camera.rotation.set( Math.PI/180 *  300 , Math.PI/180 *  30 , Math.PI/180 *  30);
+	camera.rotation.set( Math.PI/180 *  300 , Math.PI/180 * 20 , Math.PI/180 * 30);
 
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
@@ -50,9 +50,12 @@ function init(){
 	light.position.set( - 1, 1, 1 );
 	scene.add( light );
 
-	// var light = new THREE.AmbientLight( 0x222222 );
-	// light.castShadow = true;
-	// scene.add( light );
+	var light = new THREE.PointLight( 0xffffff, 0.8, 18 );
+	light.position.set(-3,6,-3);
+	light.castShadow = true;
+	light.shadow.camera.near = 1;
+	light.shadow.camera.far = 1000;
+	scene.add( light );
 
 	meshes = new THREE.Object3D();
 	const geometry = new THREE.BoxGeometry(1, 1, 1);
@@ -69,8 +72,8 @@ function init(){
 		mesh.scale.z = 20;
 		mesh.updateMatrix();
 		mesh.matrixAutoUpdate = false;
-		// mesh.receiveShadow = true;
-		// mesh.castShadow = true;
+		mesh.receiveShadow = true;
+		mesh.castShadow = true;
 		meshes.add( mesh );
 	}
 
@@ -78,7 +81,7 @@ function init(){
 		new THREE.PlaneGeometry( 1600, 1600, 100, 100 ),
 		new THREE.MeshPhongMaterial( { color:0x333333, flatShading: true } )
 	);
-	// meshFloor.receiveShadow = true;
+	meshFloor.receiveShadow = true;
 	meshFloor.position.y = 0;
 	meshFloor.rotation.x -= Math.PI / 2;
 
